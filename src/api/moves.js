@@ -134,7 +134,10 @@ export async function queryMoves(filters, page = 1, pageSize = 20) {
     }
     // 施法关键属性
     if (filters.casting_ability) {
-      const selected = filters.casting_ability.split(',').map(s => s.trim()).filter(Boolean)
+      const raw = Array.isArray(filters.casting_ability)
+        ? filters.casting_ability.join(',')
+        : filters.casting_ability
+      const selected = raw.split(',').map(s => s.trim()).filter(Boolean)
       if (selected.length > 0) {
         const matches = matchCastingAbility(move.casting_ability, selected)
         if (!matches) return false
