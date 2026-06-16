@@ -73,9 +73,8 @@ function parseCastingAbilities(rawList) {
  * @param {boolean} [filters.uses_action]       - 是否消耗动作
  * @param {boolean} [filters.uses_bonus_action] - 是否消耗附赠动作
  * @param {boolean} [filters.uses_reaction]     - 是否为反应
- * @param {boolean} [filters.has_verbal]        - 是否需要语言成分
- * @param {boolean} [filters.has_somatic]       - 是否需要姿势成分
- * @param {boolean} [filters.has_material]      - 是否需要材料成分
+ * @param {string[]} [filters.components]       - 法术成分（数组，如 ['V','S']，AND 匹配）
+ * @param {number}  [filters.first_level]       - 首环位（0=戏法, 1-6=对应环，需同时满足）
  * @param {boolean} [filters.requires_concentration] - 是否需要专注
  * @param {string}  [filters.casting_ability]   - 逗号分隔的施法属性（OR 匹配）
  * @param {boolean} [filters.ritual]            - 是否为仪式
@@ -116,17 +115,18 @@ export async function queryMoves(filters, page = 1, pageSize = 20) {
     if (filters.uses_reaction != null) {
       if (move.uses_reaction !== filters.uses_reaction) return false
     }
-    // 语言 V
-    if (filters.has_verbal != null) {
-      if (move.has_verbal !== filters.has_verbal) return false
+    // 法术成分（多选，AND 逻辑：选中的成分招式必须全部具备）
+    if (filters.components && filters.components.length > 0) {
+      for (const c of filters.components) {
+        if (c === 'V' && !move.has_verbal) return false
+        if (c === 'S' && !move.has_somatic) return false
+        if (c === 'M' && !move.has_material) return false
+      }
     }
-    // 姿势 S
-    if (filters.has_somatic != null) {
-      if (move.has_somatic !== filters.has_somatic) return false
-    }
-    // 材料 M
-    if (filters.has_material != null) {
-      if (move.has_material !== filters.has_material) return false
+    // 首环位
+    if (filters.first_level != null) {
+      const fl = getFirstLevel(move)
+      if (fl !== filters.first_level) return false
     }
     // 专注
     if (filters.requires_concentration != null) {
@@ -181,4 +181,20 @@ function matchCastingAbility(ability, selected) {
   }
 
   return false
+}
+
+/**
+ * 获取招式的最低环位（第一个非空环位）
+ * @param {Object} move
+ * @returns {number|null} 0=戏法, 1-6=对应环, null=无数据
+ */
+function getFirstLevel(move) {
+  if (move.cantrip) return 0
+  if (move.level_1)  return 1
+  if (move.level_2)  return 2
+  if (move.level_3)  return 3
+  if (move.level_4)  return 4
+  if (move.level_5)  return 5
+  if (move.level_6)  return 6
+  return null
 }

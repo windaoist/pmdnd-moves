@@ -92,36 +92,44 @@
           </el-col>
         </el-row>
 
-        <!-- 第三行：V / S / M / 仪式 -->
+        <!-- 第三行：法术成分 / 首环位 / 仪式 -->
         <el-row :gutter="16">
-          <el-col :span="6">
-            <el-form-item label="语言 V">
-              <el-select v-model="filters.has_verbal" clearable style="width:100%">
-                <el-option label="全部" :value="null" />
-                <el-option label="是" :value="true" />
-                <el-option label="否" :value="false" />
+          <el-col :span="8">
+            <el-form-item label="法术成分">
+              <el-select
+                v-model="filters.components"
+                placeholder="全部成分"
+                clearable
+                multiple
+                collapse-tags
+                collapse-tags-tooltip
+                style="width:100%"
+              >
+                <el-option label="语言 V" value="V" />
+                <el-option label="姿势 S" value="S" />
+                <el-option label="材料 M" value="M" />
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="姿势 S">
-              <el-select v-model="filters.has_somatic" clearable style="width:100%">
-                <el-option label="全部" :value="null" />
-                <el-option label="是" :value="true" />
-                <el-option label="否" :value="false" />
+          <el-col :span="8">
+            <el-form-item label="首环位">
+              <el-select
+                v-model="filters.first_level"
+                placeholder="全部环位"
+                clearable
+                style="width:100%"
+              >
+                <el-option label="戏法（0环）" :value="0" />
+                <el-option label="1 环" :value="1" />
+                <el-option label="2 环" :value="2" />
+                <el-option label="3 环" :value="3" />
+                <el-option label="4 环" :value="4" />
+                <el-option label="5 环" :value="5" />
+                <el-option label="6 环" :value="6" />
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="材料 M">
-              <el-select v-model="filters.has_material" clearable style="width:100%">
-                <el-option label="全部" :value="null" />
-                <el-option label="是" :value="true" />
-                <el-option label="否" :value="false" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="仪式">
               <el-select v-model="filters.ritual" clearable style="width:100%">
                 <el-option label="全部" :value="null" />
@@ -348,9 +356,8 @@ const filters = reactive({
   uses_action: null,
   uses_bonus_action: null,
   uses_reaction: null,
-  has_verbal: null,
-  has_somatic: null,
-  has_material: null,
+  components: [],
+  first_level: null,
   requires_concentration: null,
   casting_ability: [],
   ritual: null,
@@ -377,9 +384,10 @@ let allFiltered = []
 function buildFilterParams() {
   const params = {}
   for (const [key, val] of Object.entries(filters)) {
-    if (key === 'casting_ability') {
-      if (Array.isArray(val) && val.length > 0) {
-        params[key] = val.join(',')
+    // 数组类型：只传非空数组
+    if (Array.isArray(val)) {
+      if (val.length > 0) {
+        params[key] = val
       }
     } else if (val !== null && val !== '') {
       params[key] = val
@@ -431,7 +439,11 @@ function onExpandChange(row, expandedRows) {
 /** 重置筛选 */
 async function resetFilters() {
   for (const key of Object.keys(filters)) {
-    filters[key] = key === 'casting_ability' ? [] : null
+    if (key === 'casting_ability' || key === 'components') {
+      filters[key] = []
+    } else {
+      filters[key] = null
+    }
   }
   filters.name = ''
   page.value = 1
