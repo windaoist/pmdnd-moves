@@ -14,11 +14,14 @@ let dataPromise = null
 /**
  * 加载招式数据（惰性加载，只加载一次）
  */
-function loadData() {
+export function loadMoves() {
   if (!dataPromise) {
-    dataPromise = fetch('data/moves.json').then(r => {
+    dataPromise = fetch(`${import.meta.env.BASE_URL}data/moves.json`).then(r => {
       if (!r.ok) throw new Error(`HTTP ${r.status} — 数据加载失败`)
       return r.json()
+    }).catch(error => {
+      dataPromise = null
+      throw error
     })
   }
   return dataPromise
@@ -28,7 +31,7 @@ function loadData() {
  * 从数据中提取筛选选项（学派、属性、施法关键属性）
  */
 export async function getFilterOptions() {
-  const moves = await loadData()
+  const moves = await loadMoves()
   const schools = [...new Set(moves.map(m => m.school).filter(Boolean))]
   const allProps = moves.flatMap(m => m.property_choices || [])
   const properties = [...new Set(allProps)].filter(Boolean)
@@ -82,8 +85,8 @@ function parseCastingAbilities(rawList) {
  * @param {number}  [pageSize=20]
  * @returns {Promise<{total: number, page: number, page_size: number, results: Array}>}
  */
-export async function queryMoves(filters, page = 1, pageSize = 20) {
-  const moves = await loadData()
+export async function queryMoves(filters, page = 1, pageSize = 20, sourceMoves = null) {
+  const moves = sourceMoves ?? await loadMoves()
 
   // 1. 过滤
   let filtered = moves.filter(move => {

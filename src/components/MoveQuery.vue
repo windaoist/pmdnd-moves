@@ -6,7 +6,7 @@
 
         <!-- 第一行：名称 / 学派 / 属性 -->
         <el-row :gutter="16">
-          <el-col :span="8">
+          <el-col :xs="24" :sm="8">
             <el-form-item label="名称">
               <el-input
                 v-model="filters.name"
@@ -16,7 +16,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :xs="24" :sm="8">
             <el-form-item label="学派">
               <el-select
                 v-model="filters.school"
@@ -33,7 +33,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :xs="24" :sm="8">
             <el-form-item label="属性">
               <el-select
                 v-model="filters.property"
@@ -54,7 +54,7 @@
 
         <!-- 第二行：动作 / 附赠 / 反应 / 专注 -->
         <el-row :gutter="16">
-          <el-col :span="6">
+          <el-col :xs="12" :sm="6">
             <el-form-item label="动作">
               <el-select v-model="filters.uses_action" clearable style="width:100%">
                 <el-option label="全部" :value="null" />
@@ -63,7 +63,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="12" :sm="6">
             <el-form-item label="附赠动作">
               <el-select v-model="filters.uses_bonus_action" clearable style="width:100%">
                 <el-option label="全部" :value="null" />
@@ -72,7 +72,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="12" :sm="6">
             <el-form-item label="反应">
               <el-select v-model="filters.uses_reaction" clearable style="width:100%">
                 <el-option label="全部" :value="null" />
@@ -81,7 +81,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="12" :sm="6">
             <el-form-item label="专注">
               <el-select v-model="filters.requires_concentration" clearable style="width:100%">
                 <el-option label="全部" :value="null" />
@@ -94,7 +94,7 @@
 
         <!-- 第三行：法术成分 / 首环位 / 仪式 -->
         <el-row :gutter="16">
-          <el-col :span="8">
+          <el-col :xs="24" :sm="8">
             <el-form-item label="法术成分">
               <el-select
                 v-model="filters.components"
@@ -111,7 +111,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :xs="24" :sm="8">
             <el-form-item label="首环位">
               <el-select
                 v-model="filters.first_level"
@@ -129,7 +129,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :xs="24" :sm="8">
             <el-form-item label="仪式">
               <el-select v-model="filters.ritual" clearable style="width:100%">
                 <el-option label="全部" :value="null" />
@@ -142,7 +142,7 @@
 
         <!-- 第四行：施法关键属性 -->
         <el-row :gutter="16">
-          <el-col :span="8">
+          <el-col :xs="24" :sm="8">
             <el-form-item label="施法属性">
               <el-select
                 v-model="filters.casting_ability"
@@ -162,7 +162,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="16" style="display:flex; align-items:flex-start; gap:12px; padding-top:2px">
+          <el-col :xs="24" :sm="16" style="display:flex; align-items:flex-start; gap:12px; padding-top:2px">
             <el-button type="primary" :icon="Search" @click="doSearch">
               查询
             </el-button>
@@ -197,54 +197,21 @@
         size="small"
         @expand-change="onExpandChange"
       >
-        <el-table-column prop="name" label="名称" min-width="120" fixed />
-        <el-table-column prop="school" label="学派" width="60" align="center" />
-        <el-table-column prop="property" label="属性" min-width="100" />
-        <el-table-column label="资源" width="160" align="center">
-          <template #default="{ row }">
-            <el-tag v-if="row.uses_action" size="small" type="primary" effect="plain">动作</el-tag>
-            <el-tag v-if="row.uses_bonus_action" size="small" type="success" effect="plain">附赠</el-tag>
-            <el-tag v-if="row.uses_reaction" size="small" type="warning" effect="plain">反应</el-tag>
-            <span v-if="!row.uses_action && !row.uses_bonus_action && !row.uses_reaction" class="dim">—</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="成分" width="130" align="center">
-          <template #default="{ row }">
-            <el-tag v-if="row.has_verbal" size="small" type="danger" effect="plain">V</el-tag>
-            <el-tag v-if="row.has_somatic" size="small" type="warning" effect="plain">S</el-tag>
-            <el-tag v-if="row.has_material" size="small" type="info" effect="plain">M</el-tag>
-            <span v-if="!row.has_verbal && !row.has_somatic && !row.has_material" class="dim">无</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="距离" width="110">
-          <template #default="{ row }">
-            <span class="range-cell">
-              <span class="range-text">{{ threatlessRange(row.range) }}</span>
-              <el-tag v-if="hasThreat(row.range)" size="small" type="danger" effect="dark" class="threat-tag">*受威胁</el-tag>
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="duration" label="持续时间" min-width="120" />
-
-        <el-table-column label="专注" width="80" align="center">
-          <template #default="{ row }">
-            <el-tag v-if="row.requires_concentration" type="warning" effect="dark" size="small">专注</el-tag>
-            <span v-else class="dim">—</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="casting_ability" label="施法属性" min-width="110" />
-
-        <el-table-column label="仪式" width="60" align="center">
-          <template #default="{ row }">
-            <el-tag v-if="row.ritual" type="primary" effect="dark" size="small">仪式</el-tag>
-            <span v-else class="dim">—</span>
-          </template>
-        </el-table-column>
-
         <el-table-column type="expand" width="36">
           <template #default="{ row }">
             <div class="expanded-detail">
+              <div v-if="row.rule_note" class="detail-box"><strong>手册说明：</strong>{{ row.rule_note }}</div>
+              <div v-if="row.learning_sources" class="detail-box">
+                <strong>学习依据：</strong>
+                <p v-for="(source, index) in row.learning_sources" :key="index">
+                  {{ source.pokemon }} · {{ source.method }} · {{ source.original }}
+                  <template v-if="source.generation"> · 第 {{ source.generation }} 世代</template>
+                  <template v-if="source.versions?.length"> · {{ source.versions.map(id => versionNames[id]?.name || id).join('；') }}</template>
+                  <template v-if="source.original_level != null"> · 原作 Lv.{{ source.original_level }}（本规则无视原作等级要求）</template>
+                </p>
+                <p v-if="row.merged_from.length">原作招式 {{ row.merged_from.join('、') }} 合并为此招式，只列一次。</p>
+                <p>当前种族最大环位：{{ maxLevel }} 环。灰色版本超出当前环位；每个环位版本分别学习和记忆。</p>
+              </div>
               <!-- 多环位时显示删除线数据丢失提示（紧凑型） -->
               <div v-if="hasMultipleLevels(row)" class="strike-tip">
                 ⚠ 高环位仅显示相比低环位的修改内容，原始删除线已丢失，请结合低环位理解。
@@ -321,6 +288,67 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column prop="name" label="名称" min-width="120" fixed />
+        <el-table-column v-if="sourceMoves !== null" label="环位版本" min-width="130">
+          <template #default="{ row }">
+            <span v-for="level in row.available_levels" :key="level" class="version-level" :class="{ unavailable: level > maxLevel }">
+              {{ level === 0 ? '戏法' : `${level}环` }}
+            </span>
+            <span v-if="!row.available_levels.length" class="dim">见招式说明</span>
+          </template>
+        </el-table-column>
+        <el-table-column v-if="sourceMoves !== null" label="学习来源（展开查看详情）" min-width="210">
+          <template #default="{ row }">
+            <div>{{ [...new Set(row.learning_sources.map(s => s.method))].join('、') }}</div>
+            <small class="source-summary">{{ [...new Set(row.learning_sources.map(s => s.pokemon))].join('、') }}</small>
+            <div v-if="row.merged_from.length" class="source-summary">合并：{{ row.merged_from.join('、') }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="school" label="学派" width="60" align="center" />
+        <el-table-column prop="property" label="属性" min-width="100" />
+        <el-table-column label="资源" width="160" align="center">
+          <template #default="{ row }">
+            <el-tag v-if="row.uses_action" size="small" type="primary" effect="plain">动作</el-tag>
+            <el-tag v-if="row.uses_bonus_action" size="small" type="success" effect="plain">附赠</el-tag>
+            <el-tag v-if="row.uses_reaction" size="small" type="warning" effect="plain">反应</el-tag>
+            <span v-if="!row.uses_action && !row.uses_bonus_action && !row.uses_reaction" class="dim">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="成分" width="130" align="center">
+          <template #default="{ row }">
+            <el-tag v-if="row.has_verbal" size="small" type="danger" effect="plain">V</el-tag>
+            <el-tag v-if="row.has_somatic" size="small" type="warning" effect="plain">S</el-tag>
+            <el-tag v-if="row.has_material" size="small" type="info" effect="plain">M</el-tag>
+            <span v-if="!row.has_verbal && !row.has_somatic && !row.has_material" class="dim">无</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="距离" width="110">
+          <template #default="{ row }">
+            <span class="range-cell">
+              <span class="range-text">{{ threatlessRange(row.range) }}</span>
+              <el-tag v-if="hasThreat(row.range)" size="small" type="danger" effect="dark" class="threat-tag">*受威胁</el-tag>
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="duration" label="持续时间" min-width="120" />
+
+        <el-table-column label="专注" width="80" align="center">
+          <template #default="{ row }">
+            <el-tag v-if="row.requires_concentration" type="warning" effect="dark" size="small">专注</el-tag>
+            <span v-else class="dim">—</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="casting_ability" label="施法属性" min-width="110" />
+
+        <el-table-column label="仪式" width="60" align="center">
+          <template #default="{ row }">
+            <el-tag v-if="row.ritual" type="primary" effect="dark" size="small">仪式</el-tag>
+            <span v-else class="dim">—</span>
+          </template>
+        </el-table-column>
+
+
       </el-table>
 
       <!-- 空状态 -->
@@ -342,10 +370,16 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, nextTick } from 'vue'
+import { ref, reactive, onMounted, nextTick, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Search, Refresh } from '@element-plus/icons-vue'
 import { queryMoves, getFilterOptions } from '../api/moves.js'
+
+const props = defineProps({
+  sourceMoves: { type: Array, default: null },
+  maxLevel: { type: Number, default: 1 },
+  versionNames: { type: Object, default: () => ({}) },
+})
 
 // ── 状态 ──────────────────────────────────────────────
 
@@ -403,7 +437,7 @@ async function doSearch() {
   try {
     const params = buildFilterParams()
     // 先不做分页，缓存全量过滤结果，供分页时直接切片
-    const res = await queryMoves(params, 1, 999999)
+    const res = await queryMoves(params, 1, 999999, props.sourceMoves)
     allFiltered = res.results
     total.value = res.total
     // 取当前页
@@ -500,6 +534,8 @@ onMounted(async () => {
   // 初始加载所有数据
   await doSearch()
 })
+
+watch(() => props.sourceMoves, doSearch)
 </script>
 
 <style scoped>
@@ -530,6 +566,10 @@ onMounted(async () => {
   color: #c0c4cc;
 }
 
+.version-level { display: inline-block; margin: 2px 6px 2px 0; color: #337ecc; font-weight: 600; }
+.version-level.unavailable { color: #909399; font-weight: 400; }
+.source-summary { color: #606266; font-size: 12px; }
+
 .pagination-wrap {
   margin-top: 16px;
   display: flex;
@@ -538,6 +578,8 @@ onMounted(async () => {
 
 .expanded-detail {
   padding: 12px 16px;
+  max-width: min(1280px, calc(100vw - 90px));
+  overflow-wrap: anywhere;
   line-height: 1.75;
   font-size: 14px;
 }

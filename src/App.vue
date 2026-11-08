@@ -7,13 +7,24 @@
       </div>
     </el-header>
     <el-main>
-      <MoveQuery />
+      <el-tabs v-model="activeView" class="main-tabs">
+        <el-tab-pane label="招式查询" name="moves" />
+        <el-tab-pane label="宝可梦可学招式" name="pokemon" />
+      </el-tabs>
+      <KeepAlive>
+        <MoveQuery v-if="activeView === 'moves'" />
+        <PokemonQuery v-else />
+      </KeepAlive>
     </el-main>
   </el-container>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import MoveQuery from './components/MoveQuery.vue'
+import PokemonQuery from './components/PokemonQuery.vue'
+
+const activeView = ref('moves')
 </script>
 
 <style>
@@ -63,5 +74,12 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+}
+
+.main-tabs { margin-bottom: 12px; }
+
+@media (max-width: 600px) {
+  .app-header { padding: 0 16px; }
+  .el-main { padding: 12px 8px; }
 }
 </style>
